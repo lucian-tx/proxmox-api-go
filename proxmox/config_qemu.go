@@ -1405,6 +1405,7 @@ func (c ConfigQemu) CreateQemuMachineParam(
 	params map[string]interface{},
 ) error {
 	if c.Machine == "" {
+		log.Printf("[DEBUG] no machine type specified, fall back nil")
 		return nil
 	}
 	if matched, _ := regexp.MatchString(machineModels, c.Machine); matched {

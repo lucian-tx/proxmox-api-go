@@ -285,12 +285,6 @@ func (config ConfigQemu) UpdateConfig(vmr *VmRef, client *Client) (err error) {
 	// Array to list deleted parameters
 	// deleteParams := []string{}
 
-	if config.Machine != "" {
-		configParams["machine"] = config.Machine
-	} else {
-		configParams["machine"] = config.RunningMachine
-	}
-
 	if config.Agent != 0 {
 		configParams["agent"] = config.Agent
 	}
@@ -672,6 +666,19 @@ func NewConfigQemuFromApi(vmr *VmRef, client *Client) (config *ConfigQemu, err e
 		QemuPCIDevices:  QemuDevices{},
 		QemuUsbs:        QemuDevices{},
 		Ipconfig:        IpconfigMap{},
+	}
+
+	if val, ok := vmConfig["machine"]; ok {
+		if v, ok := val.(string); ok {
+			config.Machine = v
+		}
+	}
+	if val, ok := vmConfig["running-machine"]; ok {
+		if v, ok := val.(string); ok {
+			log.Printf("[DEBUG] Overwrote machine type %q with %q", config.Machine, v)
+			config.RunningMachine = v
+			config.Machine = v
+		}
 	}
 
 	if balloon >= 1 {

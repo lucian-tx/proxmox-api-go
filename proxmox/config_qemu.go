@@ -41,7 +41,8 @@ type ConfigQemu struct {
 	Pool            string      `json:"pool,omitempty"`
 	Bios            string      `json:"bios,omitempty"`
 	EFIDisk         QemuDevice  `json:"efidisk,omitempty"`
-	Machine         string      `json:"running-machine,omitempty"`
+	Machine         string      `json:"machine,omitempty"`
+	RunningMachine  string      `json:"running-machine,omitempty"`
 	Onboot          *bool       `json:"onboot,omitempty"`
 	Startup         string      `json:"startup,omitempty"`
 	Tablet          *bool       `json:"tablet,omitempty"`

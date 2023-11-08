@@ -285,6 +285,12 @@ func (config ConfigQemu) UpdateConfig(vmr *VmRef, client *Client) (err error) {
 	// Array to list deleted parameters
 	// deleteParams := []string{}
 
+	if config.Machine != "" {
+		configParams["machine"] = config.Machine
+	} else {
+		configParams["machine"] = config.RunningMachine
+	}
+
 	if config.Agent != 0 {
 		configParams["agent"] = config.Agent
 	}
@@ -1404,15 +1410,21 @@ func (c ConfigQemu) CreateQemuUsbsParams(
 func (c ConfigQemu) CreateQemuMachineParam(
 	params map[string]interface{},
 ) error {
-	if c.Machine == "" {
-		log.Printf("[DEBUG] no machine type specified, fall back nil")
+	m := c.Machine
+	if m == "" {
+		m = c.RunningMachine
+		log.Printf("[DEBUG] Setting machine to %v | machine: %v / running machine: %v", m, c.Machine, c.RunningMachine)
+	}
+
+	if m == "" {
+		log.Printf("[DEBUG] no machine type specified, fall back to default")
 		return nil
 	}
-	if matched, _ := regexp.MatchString(machineModels, c.Machine); matched {
-		params["machine"] = c.Machine
+	if matched, _ := regexp.MatchString(machineModels, m); matched {
+		params["machine"] = m
 		return nil
 	}
-	return fmt.Errorf("unsupported machine type, fall back to default")
+	return fmt.Errorf("unsupported machine type (%v), fall back to default", m)
 }
 
 func (p QemuDeviceParam) createDeviceParam(

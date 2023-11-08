@@ -10,8 +10,8 @@ func LogFatalError(err error) {
 	}
 }
 
-func LogFatalListing(text string, err error){
+func LogFatalListing(text string, err error) {
 	if err != nil {
-		log.Fatalf("error listing %s %+v\n",text ,err)
+		log.Fatalf("error listing %s %+v\n", text, err)
 	}
 }

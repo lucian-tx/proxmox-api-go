@@ -41,7 +41,7 @@ type ConfigQemu struct {
 	Pool            string      `json:"pool,omitempty"`
 	Bios            string      `json:"bios,omitempty"`
 	EFIDisk         QemuDevice  `json:"efidisk,omitempty"`
-	Machine         string      `json:"machine,omitempty"`
+	Machine         string      `json:"running-machine,omitempty"`
 	Onboot          *bool       `json:"onboot,omitempty"`
 	Startup         string      `json:"startup,omitempty"`
 	Tablet          *bool       `json:"tablet,omitempty"`
@@ -281,8 +281,8 @@ func (config ConfigQemu) CloneVm(sourceVmr *VmRef, vmr *VmRef, client *Client) (
 func (config ConfigQemu) UpdateConfig(vmr *VmRef, client *Client) (err error) {
 	configParams := map[string]interface{}{}
 
-	//Array to list deleted parameters
-	//deleteParams := []string{}
+	// Array to list deleted parameters
+	// deleteParams := []string{}
 
 	if config.Agent != 0 {
 		configParams["agent"] = config.Agent
@@ -396,9 +396,9 @@ func (config ConfigQemu) UpdateConfig(vmr *VmRef, client *Client) (err error) {
 	if err != nil {
 		log.Printf("[ERROR] %q", err)
 	}
-	//Copy the disks to the global configParams
+	// Copy the disks to the global configParams
 	for key, value := range configParamsDisk {
-		//vmid is only required in createVMDisks
+		// vmid is only required in createVMDisks
 		if key != "vmid" {
 			configParams[key] = value
 		}
@@ -607,12 +607,12 @@ func NewConfigQemuFromApi(vmr *VmRef, client *Client) (config *ConfigQemu, err e
 	if _, isSet := vmConfig["numa"]; isSet {
 		numa = Itob(int(vmConfig["numa"].(float64)))
 	}
-	//Can be network,disk,cpu,memory,usb
+	// Can be network,disk,cpu,memory,usb
 	hotplug := "network,disk,usb"
 	if _, isSet := vmConfig["hotplug"]; isSet {
 		hotplug = vmConfig["hotplug"].(string)
 	}
-	//boot by default from hard disk (c), CD-ROM (d), network (n).
+	// boot by default from hard disk (c), CD-ROM (d), network (n).
 	boot := "cdn"
 	if _, isSet := vmConfig["boot"]; isSet {
 		boot = vmConfig["boot"].(string)
@@ -832,7 +832,7 @@ func NewConfigQemuFromApi(vmr *VmRef, client *Client) (config *ConfigQemu, err e
 		config.QemuUnusedDisks[diskID] = finalDiskConfMap
 	}
 
-	//Display
+	// Display
 	if vga, isSet := vmConfig["vga"]; isSet {
 		vgaList := strings.Split(vga.(string), ",")
 		vgaMap := QemuDevice{}
@@ -988,7 +988,7 @@ func NewConfigQemuFromApi(vmr *VmRef, client *Client) (config *ConfigQemu, err e
 		config.HaState = vmr.HaState()
 		config.HaGroup = vmr.HaGroup()
 	} else {
-		//log.Printf("[DEBUG] VM %d(%s) has no HA config", vmr.vmId, vmConfig["hostname"])
+		// log.Printf("[DEBUG] VM %d(%s) has no HA config", vmr.vmId, vmConfig["hostname"])
 		return config, nil
 	}
 

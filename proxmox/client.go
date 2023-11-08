@@ -138,7 +138,7 @@ func (c *Client) GetJsonRetryable(url string, data *map[string]interface{}, trie
 		if strings.Contains(statErr.Error(), "500 no such resource") {
 			return statErr
 		}
-		//fmt.Printf("[DEBUG][GetJsonRetryable] Sleeping for %d seconds before asking url %s", ii+1, url)
+		// fmt.Printf("[DEBUG][GetJsonRetryable] Sleeping for %d seconds before asking url %s", ii+1, url)
 		time.Sleep(time.Duration(ii+1) * time.Second)
 	}
 	return statErr
@@ -488,6 +488,10 @@ func (c *Client) ShutdownVm(vmr *VmRef) (exitStatus string, err error) {
 	return c.StatusChangeVm(vmr, nil, "shutdown")
 }
 
+func (c *Client) RebootVm(vmr *VmRef) (exitStatus string, err error) {
+	return c.StatusChangeVm(vmr, nil, "reboot")
+}
+
 func (c *Client) ResetVm(vmr *VmRef) (exitStatus string, err error) {
 	return c.StatusChangeVm(vmr, nil, "reset")
 }
@@ -517,7 +521,7 @@ func (c *Client) DeleteVmParams(vmr *VmRef, params map[string]interface{}) (exit
 		return "", err
 	}
 
-	//Remove HA if required
+	// Remove HA if required
 	if vmr.haState != "" {
 		url := fmt.Sprintf("/cluster/ha/resources/%d", vmr.vmId)
 		resp, err := c.session.Delete(url, nil, nil)
@@ -755,7 +759,7 @@ func (c *Client) ResizeQemuDisk(vmr *VmRef, disk string, moreSizeGB int) (exitSt
 func (c *Client) ResizeQemuDiskRaw(vmr *VmRef, disk string, size string) (exitStatus interface{}, err error) {
 	// PUT
 	//disk:virtio0
-	//size:+2G
+	// size:+2G
 	if disk == "" {
 		disk = "virtio0"
 	}
@@ -1484,7 +1488,7 @@ func (c *Client) UpdateVMHA(vmr *VmRef, haState string, haGroup string) (exitSta
 		return
 	}
 
-	//Remove HA
+	// Remove HA
 	if haState == "" {
 		url := fmt.Sprintf("/cluster/ha/resources/%d", vmr.vmId)
 		resp, err := c.session.Delete(url, nil, nil)
@@ -1501,7 +1505,7 @@ func (c *Client) UpdateVMHA(vmr *VmRef, haState string, haGroup string) (exitSta
 		return nil, err
 	}
 
-	//Activate HA
+	// Activate HA
 	if vmr.haState == "" {
 		paramMap := map[string]interface{}{
 			"sid": vmr.vmId,
@@ -1524,7 +1528,7 @@ func (c *Client) UpdateVMHA(vmr *VmRef, haState string, haGroup string) (exitSta
 		}
 	}
 
-	//Set wanted state
+	// Set wanted state
 	paramMap := map[string]interface{}{
 		"state": haState,
 		"group": haGroup,
@@ -1572,7 +1576,7 @@ func (c *Client) DeletePool(poolid string) error {
 	return c.Delete("/pools/" + poolid)
 }
 
-//permissions check
+// permissions check
 
 func (c *Client) GetUserPermissions(id UserID, path string) (permissions []string, err error) {
 	existence, err := CheckUserExistence(id, c)
